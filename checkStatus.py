@@ -16,8 +16,7 @@ except IOError:
   downloads = {}
 
 proxystatus = commands.getstatusoutput('voms-proxy-info')
-if not proxystatus[0] == 0:
-  print "FATAL ERROR: need valid voms proxy to start downloads"; sys.exit()
+if proxystatus[0]: print "FATAL ERROR: need valid voms proxy to start downloads"; sys.exit()
 
 # Check list for new jobs with 'done' status
 for job in jobs:
