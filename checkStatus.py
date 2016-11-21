@@ -1,10 +1,17 @@
-import sys
-import pickle
-import commands
+import os, sys, pickle, datetime, commands
+
+def fatal(error): print 'FATAL ERROR: %s' % error; sys.exit()
+
+# Check for string in environment variables
+if not 'PANDASTR' in os.environ: fatal('Must set env var PANDASTR')
+PANDASTR = os.environ['PANDASTR']
+print "Will search for jobs with string %s" % PANDASTR
+print "Job last ran on", datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p")
+print ""
 
 # Use pandamonium to check job status
 keys = ['status','jobid','percent','name']
-status = commands.getstatusoutput('pandamon group.phys-higgs*cjmeyer')[1]
+status = commands.getstatusoutput('pandamon %s' % PANDASTR)[1]
 jobs = [ dict(zip(keys,jobstat.split())) for jobstat in status.splitlines() ]
 print status
 print ""
@@ -16,17 +23,20 @@ except IOError:
   downloads = {}
 
 proxystatus = commands.getstatusoutput('voms-proxy-info')
-if proxystatus[0]: print "FATAL ERROR: need valid voms proxy to start downloads"; sys.exit()
+if proxystatus[0]: fatal('need valid voms proxy to start downloads')
 
 # Check list for new jobs with 'done' status
+print "Submitting jobs:"
 for job in jobs:
   if job['status'] == 'done':
     jobID = int(job['jobid'])
     if jobID in downloads:
-      print "Already downloaded job %d" % jobID
+      pass
       ### Submit batchjob to download job
-      ###   --> how to setup proxy without giving away secrets?
     else:
+      print "\t", job['name']
       downloads[jobID] = job['name']
 
+# Save download list
 pickle.dump( downloads, open( 'downloads.pkl', 'wb' ) )
+print ""
