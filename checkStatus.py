@@ -30,12 +30,15 @@ print "Submitting jobs:"
 for job in jobs:
   if job['status'] == 'done':
     jobID = int(job['jobid'])
-    if jobID in downloads:
-      pass
-      ### Submit batchjob to download job
+    if jobID in downloads: pass
     else:
       print "\t", job['name']
-      downloads[jobID] = job['name']
+      downloads[jobID] = (datetime.datetime.now(), job['name'])
+      cmd = 'qsub -q hep getsample.sh -F %s_MxAOD.root' % job['name'].replace('/','')
+      substat = commands.getstatusoutput( cmd )
+      if substat[0]:
+        print "Batch job failed, returned value", substat[0]
+      ### Submit batchjob to download job
 
 # Save download list
 pickle.dump( downloads, open( 'downloads.pkl', 'wb' ) )
