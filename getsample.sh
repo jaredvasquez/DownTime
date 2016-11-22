@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #PBS -q hep
-#PBS -l nodes=1:ppn=1,mem=8gb
+#PBS -l nodes=1:ppn=4,mem=8gb
 #PBS -l walltime=02:00:00
 #PBS -o pbslogs/$PBS_JOBNAME.o${PBS_JOBID}
 #PBS -j oe
