@@ -6,6 +6,8 @@
 #PBS -o pbslogs/$PBS_JOBNAME.o${PBS_JOBID}
 #PBS -j oe
 
+# Set your output directory
+outputDir='/group/atlas/data/jgv7/mxoad_hgamma/h014test'
 
 # Prepare environment
 cd $PBS_O_WORKDIR
@@ -13,6 +15,7 @@ cd download
 export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
 source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh --quiet
 lsetup rucio
+
 
 # Check sample exists 
 dsName=$1
@@ -26,7 +29,6 @@ echo -e "\t\t SUCCESS! Download will now start.\n"
 
 
 #Download sample to directory
-outputDir='/group/atlas/data/jgv7/mxoad_hgamma/h014test'
 cmd="rucio get --ndownloader 3 $dsName --dir $outputDir"
 echo $cmd
 $cmd
