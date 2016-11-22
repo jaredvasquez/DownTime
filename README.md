@@ -2,7 +2,7 @@
 This package has some scripts for monitoring MxAOD production jobs and then, when finished, submitting batch jobs to download the needed samples. 
 
 ## Installation
-The scripts require [pandamonium][https://github.com/dguest/pandamonium] to be installed as well as a directory with AnalysisRelease setup for you. This will all be setup for you by simply running the command:
+The scripts require [pandamonium](https://github.com/dguest/pandamonium) to be installed as well as a directory with AnalysisRelease setup for you. This will all be setup for you by simply running the command:
 ```
 source installReqs.sh 
 ```
