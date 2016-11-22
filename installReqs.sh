@@ -22,6 +22,18 @@ create_download() {
   cd ../          #return to initial dir
 }
 
+# Add to crontab
+create_cronjob() {
+  crontab -l > mycron
+  if grep -Fq "$PWD/runCron.sh" mycron; then 
+    echo "Script already included in crontab. Skipping this step"
+  else
+    echo "Adding job to crontab, will run once every minute."
+    echo "* * * * * . $PWD/runCron.sh &> $PWD/output_cronjob" >> mycron
+  fi
+  rm mycron
+}
+
 # Check which steps are still needed...
 echo ""
 if ! command -v pandamon &> /dev/null; then
@@ -37,4 +49,7 @@ if [ ! -d download ]; then
 else
   echo "Directory for downloads already created. Skipping this step"
 fi
+
+create_cronjob
 echo ""
+
