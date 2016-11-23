@@ -1,10 +1,10 @@
 import sys, commands
 from ROOT import *
 
-inputPATH ='/group/atlas/data/jgv7/mxoad_hgamma/h014test/mc15c.MGPy8_tHjb125_yt_plus1.MxAOD.p2815.h014pre2_jvasquez.root'
+inputPATH = sys.argv[1]
 sampleName = inputPATH.split('/')[-1]
 
-htag = 'h014test'
+htag = 'h014pre2'
 EOSdir = 'root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stage' % htag
 if ( htag == '' ):
   EOSdir='root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stage' % htag
@@ -37,8 +37,17 @@ subPATH = subdir+'/'+sampleName
 eosPATH = EOSdir+subPATH
 
 print "Transfering sample to eos:"
-print "  %s" % subdir
+print "  %s" % subPATH
 
-status = commands.getstatusoutput('xrdcp %s %s' % (inputPATH, eosPATH))
+cmd = 'xrdcp %s %s' % (inputPATH, eosPATH)
+print cmd
+status = commands.getstatusoutput(cmd)
 if (status[0] == 0): print "Transfer Successful"
-else:                print "Transfer Failed"
+else:
+  print "Transfer Failed";
+  if (status[0] == 13824):
+    print "File already exists on eos. Must delete before transfering."
+  else:
+    print status
+
+print ""

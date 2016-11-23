@@ -1,14 +1,15 @@
 #!/bin/bash
 
 #PBS -q hep
-#PBS -l nodes=1:ppn=4,mem=8gb
+#PBS -l nodes=1:ppn=1,mem=4gb
 #PBS -l walltime=02:00:00
 #PBS -o pbslogs/$PBS_JOBNAME.o${PBS_JOBID}
 #PBS -j oe
 
+nCPU=1
 
 # Set your output directory
-downloadDir='/group/atlas/data/jgv7/mxoad_hgamma/h014test'
+downloadDir='/group/atlas/data/jgv7/mxoad_hgamma/h014pre2'
 
 if [ ! -d "$downloadDir" ]; then
   echo 'specified download directory $downloadDir does not exist! Please create/change.'
@@ -37,7 +38,7 @@ echo -e "\t\t SUCCESS! Download will now start.\n"
 
 
 #Download sample to directory
-cmd="rucio get --ndownloader 3 $dsName --dir $downloadDir"
+cmd="rucio get --ndownloader $nCPU $dsName --dir $downloadDir"
 echo $cmd
 $cmd
 
@@ -76,6 +77,9 @@ fi
 
 # Transfer merged sample to eos
 cd ../
+kinit jvasquez@CERN.CH -l 5d -k -t jvasquez.keytab
+klist
+echo ''
 
 if klist -s; then
   if [[ -n "klist | grep CERN.CH" ]]; then 
