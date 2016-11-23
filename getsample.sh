@@ -73,6 +73,19 @@ else
   fi
 fi
 
-# Transfer merged sample to eos
 
+# Transfer merged sample to eos
 cd ../
+
+if klist -s; then
+  if [[ -n "klist | grep CERN.CH" ]]; then 
+    echo "Found valid CERN kerberos ticket."
+    python sendtoEOS.py $downloadDir/$sampleName
+  fi
+else
+  echo "No valid kerberos ticket. Can not transfer to EOS."
+  return 1
+fi
+
+echo "Finished."
+
