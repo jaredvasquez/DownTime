@@ -43,6 +43,13 @@ echo $cmd
 $cmd
 
 
+# Check that directory exists
+if [[ ! -d "$downloadDir/$dsName" ]]; then
+  echo "Dataset directory does not exist! $downloadDir/$dsName not found"
+  return 1
+fi
+
+
 # Check that all files were downloaded?
 echo -e "\nChecking that all files were downloaded..."
 files=$(echo $downloadDir/$dsName/*)
@@ -58,20 +65,62 @@ echo -e "\t\t SUCCESS!\n"
 # If all files are downloaded, merge sample
 sampleName="${dsName/group.phys-higgs./}"
 sampleName="${sampleName/_MxAOD.root/.root}"
-if [[ $sampleName =~ 'group.phys-higgs.data*' ]]; then
-  echo "Sample is data, will not merge."
-  return 1
-else 
+
+mergeMxAOD() {
   cmd="xAODMerge $downloadDir/$sampleName $files"
   echo $cmd
   if $cmd; then
     echo -e "\t\t xAODMerge SUCCESS!\n"
   else
-    echo -e "\t\t xAODMerge failed: Safe Merging... get comfortable, this takes some time.\n"
+    echo -e "\t\t AODMerge failed: Safe Merging... get comfortable, this takes some time.\n"
     cmd2="./SafeMerge.sh $downloadDir/$dsName"
     echo $cmd2
     $cmd2
   fi
+}
+
+
+mergeMC() {
+  if [[ "$Nfiles" -gt "1" ]]; then
+    if [[ "$dsName" =~ "MxAODAllSys" || "$dsName" =~ "PhotonSys" \
+       || "$dsName" =~ "JetSys" || "$dsName" =~ "2DP20_100-165_3jets" ]]; then
+      
+      outputDS_size=$(du -s $downloadDir/$dsName/ | awk '{print $1}')
+      if [[ "$outputDS_size" -le 7000000 ]]; then # 7GB sounds like a reasonable single file size?
+        mergeMxAOD || return 1
+        echo "Output file: $downloadDir/$sampleName"
+      else
+        i=$(( 1 ))
+        echo "Large (> 7 GB) AllSys/PhotonSys/JetSys/MxAOD file detected! Will only rename files"
+        mkdir $downloadDir/$sampleName
+        for f in $files; do
+          inputNo=$(printf "%03d" $i)
+          AllSysDSname=${sampleName%.root}.${inputNo}.root
+          cp $f $downloadDir/$sampleName/${AllSysDSname}
+          i=$(( $i + 1 ))
+        done
+        echo "Output folder: $downloadDir/$sampleName"
+      fi
+    else
+      mergeMxAOD || return 1
+      echo "Output file: $downloadDir/$sampleName"
+    fi
+  elif [[ "$Nfiles" -eq "1" ]]; then
+    # no need to merge if it's 1 file
+    echo "Only one file, no need to merge. Will rename file"
+    cp $downloadDir/$dsName/* ${downloadDir}/$sampleName
+    echo "Output file: $downloadDir/$sampleName"
+  else
+    echo "Number of files = 0? check if MxAOD $sampleName downloaded correctly"
+  fi
+}
+
+
+if [[ $sampleName =~ 'group.phys-higgs.data*' ]]; then
+  echo "Sample is data, will not merge."
+  return 1
+else 
+  mergeMC
 fi
 
 
@@ -91,5 +140,7 @@ else
   return 1
 fi
 
+
 echo "Finished."
+
 
