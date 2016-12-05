@@ -5,15 +5,18 @@ __downloadDB = 'logdls.pkl'
 def fatal(error): print 'FATAL ERROR: %s' % error; sys.exit()
 
 # Check for string in environment variables
-if not 'PANDASTR' in os.environ: fatal('Must set env var PANDASTR')
-PANDASTR = os.environ['PANDASTR']
-print "Will search for jobs with string %s" % PANDASTR
-print "Job last ran on", datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p")
-print ""
+PANDASTRs = [
+    'group.phys-higgs.*h014_cjmeyer',
+    'group.phys-higgs.*mc15*h014_jvasquez',
+    'group.phys-higgs.*h014a',
+]
+if len(PANDASTRs) < 1: fatal('Must specify search strings PANDASTRs')
 
 # Use pandamonium to check job status
+status = ''
 keys = ['status','jobid','percent','name']
-status = commands.getstatusoutput('pandamon %s' % PANDASTR)[1]
+for PANDASTR in PANDASTRs:
+  status += (commands.getstatusoutput('pandamon %s' % PANDASTR)[1] + '\n')
 jobs = [ dict(zip(keys,jobstat.split())) for jobstat in status.splitlines() ]
 print status
 print ""
