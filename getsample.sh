@@ -1,20 +1,22 @@
 #!/bin/bash
 
 #PBS -q hep
-#PBS -l nodes=1:ppn=1,mem=4gb
-#PBS -l walltime=02:00:00
+#PBS -l nodes=1:ppn=3,mem=4gb
+#PBS -l walltime=06:00:00
 #PBS -o pbslogs/$PBS_JOBNAME.o${PBS_JOBID}
 #PBS -j oe
 
-nCPU=1
+
+nCPU=2
 
 # Set your output directory
-downloadDir='/group/atlas/data/jgv7/mxoad_hgamma/h014pre2'
+downloadDir='/group/atlas/data/jgv7/mxoad_hgamma/h014'
 
 if [ ! -d "$downloadDir" ]; then
   echo 'specified download directory $downloadDir does not exist! Please create/change.'
   return 1
 fi
+
 
 
 # Prepare environment
@@ -24,6 +26,7 @@ export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
 source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh --quiet
 rcSetup -q
 lsetup rucio
+
 
 
 # Check sample exists 
@@ -37,10 +40,12 @@ fi
 echo -e "\t\t SUCCESS! Download will now start.\n"
 
 
+
 #Download sample to directory
 cmd="rucio get --ndownloader $nCPU $dsName --dir $downloadDir"
 echo $cmd
 $cmd
+
 
 
 # Check that directory exists
@@ -48,6 +53,7 @@ if [[ ! -d "$downloadDir/$dsName" ]]; then
   echo "Dataset directory does not exist! $downloadDir/$dsName not found"
   return 1
 fi
+
 
 
 # Check that all files were downloaded?
@@ -60,6 +66,8 @@ if [ ! "$Nfiles" -eq "$NfilesGrid" ]; then
   return 1
 fi
 echo -e "\t\t SUCCESS!\n"
+chgrp -hR hep $downloadDir/*
+
 
 
 # If all files are downloaded, merge sample
@@ -117,8 +125,13 @@ mergeMC() {
 
 
 if [[ $sampleName =~ 'group.phys-higgs.data*' ]]; then
-  echo "Sample is data, will not merge."
-  return 1
+  if [[ "$Nfiles" -eq "1" ]]; then
+    # no need to merge if it's 1 file
+    echo "Only one file, no need to merge. Will rename file"
+    cp $downloadDir/$dsName/* ${downloadDir}/$sampleName
+  else
+    mergeMxAOD
+  fi
 else 
   mergeMC
 fi
@@ -139,6 +152,7 @@ else
   echo "No valid kerberos ticket. Can not transfer to EOS."
   return 1
 fi
+chgrp -hR hep $downloadDir/*
 
 
 echo "Finished."

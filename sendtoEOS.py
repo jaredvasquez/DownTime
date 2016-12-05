@@ -1,4 +1,4 @@
-import os, sys, commands
+import os, sys, commands, fnmatch
 from ROOT import *
 
 def transferFile(input, output):
@@ -17,16 +17,13 @@ def transferFile(input, output):
 inputPATH = sys.argv[1]
 sampleName = inputPATH.split('/')[-1]
 
-htag = 'h014pre2'
-EOSdir = 'root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stage' % htag
-if ( htag == '' ):
-  EOSdir='root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stage' % htag
+htag = 'h014'
+EOSdir = 'root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stageJV' % htag
+#if ( htag == '' ):
+#  EOSdir='root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stage' % htag
 
-isdata = 'data' in sampleName.split('.')[2]
-if (isdata):
-  print "Does not currently support data."
-  sys.exit()
-
+isdata = fnmatch.fnmatch(sampleName, 'data1[0-9]_13TeV.*')
+#if (isdata): print "Does not currently support data."; sys.exit()
 #htag = sampleName.split('.')[-2].replace('_MxAOD','')
 #print htag
 
@@ -46,6 +43,12 @@ for key in subdirs:
   if key in sampleName:
     subdir = subdirs[key]
     break
+
+if isdata:
+  subdir = '/data_25ns/runs'
+  if '_50ns' in sampleName:
+    subdir = '/data_50ns/runs'
+
 subPATH = subdir+'/'+sampleName
 eosPATH = EOSdir+subPATH
 
@@ -55,18 +58,6 @@ print "  %s" % subPATH
 if os.path.isfile(inputPATH):
   # Transfer merged file
   transferFile( inputPATH, eosPATH )
-  """
-  cmd = 'xrdcp %s %s' % (inputPATH, eosPATH)
-  print cmd
-  status = commands.getstatusoutput(cmd)
-  if (status[0] == 0): print "Transfer Successful"
-  else:
-    print "Transfer Failed";
-    if (status[0] == 13824):
-      print "File already exists on eos. Must delete before transfering."
-    else:
-      print status
-  """
 
 elif os.path.isdir(inputPATH):
   # Transfer directory
@@ -76,27 +67,8 @@ elif os.path.isdir(inputPATH):
     print " -->", file
     transferFile( inputPATH+"/"+file, eosPATH+"/"+file )
 
-
-
 else:
   print "ERROR: InputPath is not file or directory"
   print "InputPath: ", inputPATH
 
 print ""
-
-"""
-  if [[ "$isFolder" == "false"  ]]; then
-    xrdcp $downloadDir/$newDSname $EOSdir/$newDSname
-    #echo "xrdcp $downloadDir/$newDSname $EOSdir/$newDSname"
-  else
-    files=$(echo $downloadDir/$newDSname/*)
-    i=$(( 1 ))
-    for f in $files; do
-        inputNo=$(printf "%03d" $i)
-        SysDSname=${newDSname%.root}.${inputNo}.root
-        xrdcp $f $EOSdir/$newDSname/${SysDSname}
-        #echo "xrdcp $f $EOSdirAllSys/$newDSname/${AllSysDSname}"
-        i=$(( $i + 1 ))
-    done
-  fi
-"""
