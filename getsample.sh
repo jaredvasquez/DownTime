@@ -2,7 +2,7 @@
 
 #PBS -q hep
 #PBS -l nodes=1:ppn=3,mem=4gb
-#PBS -l walltime=06:00:00
+#PBS -l walltime=24:00:00
 #PBS -o pbslogs/$PBS_JOBNAME.o${PBS_JOBID}
 #PBS -j oe
 
@@ -10,7 +10,7 @@
 nCPU=2
 
 # Set your output directory
-downloadDir='/group/atlas/data/jgv7/mxoad_hgamma/h014'
+downloadDir='/group/atlas/data/jgv7/mxoad_hgamma/h014a_stage'
 
 if [ ! -d "$downloadDir" ]; then
   echo 'specified download directory $downloadDir does not exist! Please create/change.'

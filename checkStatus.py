@@ -6,9 +6,21 @@ def fatal(error): print 'FATAL ERROR: %s' % error; sys.exit()
 
 # Check for string in environment variables
 PANDASTRs = [
-    'group.phys-higgs.*h014_cjmeyer',
-    'group.phys-higgs.*mc15*h014_jvasquez',
-    'group.phys-higgs.*h014a',
+    #'group.phys-higgs.*mc15*h014_*cjmeyer',
+    #'group.phys-higgs.*mc15*h014_*jvasquez',
+    #'group.phys-higgs.*mc15*h014_*zhangyu',
+    #'group.phys-higgs.*data*13TeV*h014_*cjmeyer',
+    #'group.phys-higgs.*data*13TeV*h014_*jvasquez',
+    #'group.phys-higgs.*data*13TeV*h014_*zhangyu',
+    #'group.phys-higgs.*mc15*h014a_*cjmeyer',
+    #'group.phys-higgs.*mc15*h014a_*jvasquez',
+    'group.phys-higgs.*mc15*h014a_*zhangyu',
+    #'group.phys-higgs.*data*13TeV*h014a_*cjmeyer',
+    #'group.phys-higgs.*data*13TeV*h014a_*jvasquez',
+    #'group.phys-higgs.*data*13TeV*h014a_*zhangyu',
+    'group.phys-higgs.*data*13TeV*h014_*cjmeyer10',
+    'group.phys-higgs.*mc15*MxAODPhotonAllSys*h014a_*cjmeyer',
+    'group.phys-higgs.*mc15*h014b_*JV',
 ]
 if len(PANDASTRs) < 1: fatal('Must specify search strings PANDASTRs')
 
@@ -33,6 +45,7 @@ if proxystatus[0]: fatal('need valid voms proxy to start downloads')
 # Check list for new jobs with 'done' status
 print "Submitting jobs:"
 for job in jobs:
+  if not job: continue
   if job['status'] == 'done':
     jobID = int(job['jobid'])
     if jobID in downloads: pass
