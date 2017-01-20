@@ -9,7 +9,12 @@ def transferFile(input, output):
   else:
     print "Transfer Failed";
     if (status[0] == 13824):
-      print "File already exists on eos. Must delete before transfering."
+      if 'quota space' in status[1]:
+        print '\nQuota space issue on eos. Cannot transfer files.'
+        print '  *** FATAL: Killing Job.\n'
+        sys.exit()
+      else:
+        print "File already exists on eos. Must delete before transfering."
     else:
       print status
 
@@ -19,7 +24,7 @@ sampleName = inputPATH.split('/')[-1]
 
 htag = 'h014'
 EOSdir = 'root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stageJV' % htag
-EOSdir = 'root://eosatlas.cern.ch//eos/atlas/user/j/jvasquez/public/MxAOD/%s_stageJV' % htag
+#EOSdir = 'root://eosatlas.cern.ch//eos/atlas/user/j/jvasquez/public/MxAOD/%s_stageJV' % htag
 #if ( htag == '' ):
 #  EOSdir='root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stage' % htag
 
@@ -32,6 +37,7 @@ subdir  = '/mc_25ns'
 subdirs = {
   'MxAODAllSys' : '/AllSys',
   'PhotonSys'   : '/PhotonSys',
+  'PhotonAllSys': '/PhotonAllSys',
   'Detailed'    : '/Detailed',
   'JetSysCorr1' : '/JetSysCorr1',
   'JetSysCorr1' : '/JetSysCorr2',

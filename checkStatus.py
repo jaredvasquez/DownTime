@@ -6,21 +6,14 @@ def fatal(error): print 'FATAL ERROR: %s' % error; sys.exit()
 
 # Check for string in environment variables
 PANDASTRs = [
-    #'group.phys-higgs.*mc15*h014_*cjmeyer',
-    #'group.phys-higgs.*mc15*h014_*jvasquez',
-    #'group.phys-higgs.*mc15*h014_*zhangyu',
-    #'group.phys-higgs.*data*13TeV*h014_*cjmeyer',
-    #'group.phys-higgs.*data*13TeV*h014_*jvasquez',
-    #'group.phys-higgs.*data*13TeV*h014_*zhangyu',
-    #'group.phys-higgs.*mc15*h014a_*cjmeyer',
-    #'group.phys-higgs.*mc15*h014a_*jvasquez',
-    'group.phys-higgs.*mc15*h014a_*zhangyu',
-    #'group.phys-higgs.*data*13TeV*h014a_*cjmeyer',
-    #'group.phys-higgs.*data*13TeV*h014a_*jvasquez',
-    #'group.phys-higgs.*data*13TeV*h014a_*zhangyu',
-    'group.phys-higgs.*data*13TeV*h014_*cjmeyer10',
-    'group.phys-higgs.*mc15*MxAODPhotonAllSys*h014a_*cjmeyer',
+    'group.phys-higgs.*mc15*h014*_*cjmeyer',
+    'group.phys-higgs.*mc15*h014*_*jvasquez',
+    'group.phys-higgs.*mc15*h014*_*zhangyu',
+    'group.phys-higgs.*data*13TeV*h014*_*cjmeyer',
+    'group.phys-higgs.*data*13TeV*h014*_*jvasquez',
+    'group.phys-higgs.*data*13TeV*h014*_*zhangyu',
     'group.phys-higgs.*mc15*h014b_*JV',
+    'group.phys-higgs.*mc15*h014_JGV',
 ]
 if len(PANDASTRs) < 1: fatal('Must specify search strings PANDASTRs')
 

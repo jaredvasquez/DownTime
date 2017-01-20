@@ -13,8 +13,9 @@ nCPU=2
 downloadDir='/group/atlas/data/jgv7/mxoad_hgamma/h014a_stage'
 
 if [ ! -d "$downloadDir" ]; then
+  ls $downloadDir
   echo 'specified download directory $downloadDir does not exist! Please create/change.'
-  return 1
+  exit 1
 fi
 
 
@@ -35,7 +36,7 @@ echo -e "\nChecking that sample $dsName exists..."
 NfilesGrid=$(rucio list-files $dsName |& grep "\.MxAOD\.root" | wc -l)
 if [ "$NfilesGrid" -eq "0" ]; then
   echo "ERROR! MxAOD $dsName does not exist on grid! Check name or grid status!"
-  return 1
+  exit 1
 fi
 echo -e "\t\t SUCCESS! Download will now start.\n"
 
@@ -51,7 +52,7 @@ $cmd
 # Check that directory exists
 if [[ ! -d "$downloadDir/$dsName" ]]; then
   echo "Dataset directory does not exist! $downloadDir/$dsName not found"
-  return 1
+  exit 1
 fi
 
 
@@ -63,7 +64,7 @@ Nfiles=$(echo $files | awk '{print NF}')
 ls $downloadDir/$dsName 
 if [ ! "$Nfiles" -eq "$NfilesGrid" ]; then
   echo "ERROR! Dataset $dsName did not download all files! Files on Grid: $NfilesGrid, Files locally: $Nfiles!"
-  return 1
+  exit 1
 fi
 echo -e "\t\t SUCCESS!\n"
 chgrp -hR hep $downloadDir/*
@@ -91,7 +92,7 @@ mergeMxAOD() {
 mergeMC() {
   if [[ "$Nfiles" -gt "1" ]]; then
     if [[ "$dsName" =~ "MxAODAllSys" || "$dsName" =~ "PhotonSys" \
-       || "$dsName" =~ "JetSys" || "$dsName" =~ "2DP20_100-165_3jets" ]]; then
+       || "$dsName" =~ "JetSys" || "$dsName" =~ "Sherpa_2DP20_myy_100_165_3jets" ]]; then
       
       outputDS_size=$(du -s $downloadDir/$dsName/ | awk '{print $1}')
       if [[ "$outputDS_size" -le 7000000 ]]; then # 7GB sounds like a reasonable single file size?
@@ -120,6 +121,7 @@ mergeMC() {
     echo "Output file: $downloadDir/$sampleName"
   else
     echo "Number of files = 0? check if MxAOD $sampleName downloaded correctly"
+    return 1
   fi
 }
 
@@ -136,6 +138,7 @@ else
   mergeMC
 fi
 
+chgrp -hR hep $downloadDir/*
 
 # Transfer merged sample to eos
 cd ../
@@ -150,10 +153,8 @@ if klist -s; then
   fi
 else
   echo "No valid kerberos ticket. Can not transfer to EOS."
-  return 1
+  exit 1
 fi
-chgrp -hR hep $downloadDir/*
-
 
 echo "Finished."
 

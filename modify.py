@@ -30,6 +30,8 @@ if operation == 'remove':
     del downloads[dlsamples[samplename]]
     del dlsamples[samplename]
     if not findSample(samplename):
-      print 'Removed successfully.'
+      print 'Removed %s successfully.' % samplename
       pickle.dump( downloads, open( __downloadDB, 'wb' ) )
+  else:
+    print 'Not Found: %s' % samplename
 
