@@ -23,6 +23,7 @@ inputPATH = sys.argv[1]
 sampleName = inputPATH.split('/')[-1]
 
 htag = 'h014'
+if 'h015' in sampleName: htag = 'h015'
 EOSdir = 'root://eosatlas.cern.ch//eos/atlas/atlascerngroupdisk/phys-higgs/HSG1/MxAOD/%s_stageJV' % htag
 #EOSdir = 'root://eosatlas.cern.ch//eos/atlas/user/j/jvasquez/public/MxAOD/%s_stageJV' % htag
 #if ( htag == '' ):

@@ -6,6 +6,7 @@ def fatal(error): print 'FATAL ERROR: %s' % error; sys.exit()
 
 # Check for string in environment variables
 PANDASTRs = [
+    # h014
     'group.phys-higgs.*mc15*h014*_*cjmeyer',
     'group.phys-higgs.*mc15*h014*_*jvasquez',
     'group.phys-higgs.*mc15*h014*_*zhangyu',
@@ -14,6 +15,13 @@ PANDASTRs = [
     'group.phys-higgs.*data*13TeV*h014*_*zhangyu',
     'group.phys-higgs.*mc15*h014b_*JV',
     'group.phys-higgs.*mc15*h014_JGV',
+    # h015
+    'group.phys-higgs.*data*h015*_jvasquez',
+    'group.phys-higgs.*data*h015*_cjmeyer',
+    'group.phys-higgs.*data*h015*_zhangyu',
+    'group.phys-higgs.*mc15*h015*_jvasquez',
+    'group.phys-higgs.*mc15*h015*_cjmeyer',
+    'group.phys-higgs.*mc15*h015*_zhangyu',
 ]
 if len(PANDASTRs) < 1: fatal('Must specify search strings PANDASTRs')
 
