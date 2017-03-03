@@ -2,7 +2,7 @@
 
 #PBS -q hep
 #PBS -l nodes=1:ppn=3,mem=4gb
-#PBS -l walltime=24:00:00
+#PBS -l walltime=36:00:00
 #PBS -o pbslogs/$PBS_JOBNAME.o${PBS_JOBID}
 #PBS -j oe
 

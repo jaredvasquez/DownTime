@@ -36,15 +36,19 @@ isdata = fnmatch.fnmatch(sampleName, 'data1[0-9]_13TeV.*')
 
 subdir  = '/mc_25ns'
 subdirs = {
-  'MxAODAllSys' : '/AllSys',
-  'PhotonSys'   : '/PhotonSys',
-  'PhotonAllSys': '/PhotonAllSys',
-  'Detailed'    : '/Detailed',
-  'JetSysCorr1' : '/JetSysCorr1',
-  'JetSysCorr1' : '/JetSysCorr2',
-  'JetSysCorr3' : '/JetSysCorr3',
-  'JetSysCorr4' : '/JetSysCorr4',
-  '_50ns'       : '/mc_50ns'
+  'MxAODAllSys'  : '/AllSys',
+  'Detailed'     : '/Detailed',
+  'PhotonSys'    : '/PhotonSys',
+  'PhotonAllSys' : '/PhotonAllSys',
+  'FlavorAllSys' : '/FlavorAllSys',
+  'FlavorSys'    : '/FlavorSys',
+  'LeptonMETSys' : '/LeptonMETSys',
+  'JetSys'       : '/JetSys',
+  'JetSysCorr1'  : '/JetSysCorr1',
+  'JetSysCorr1'  : '/JetSysCorr2',
+  'JetSysCorr3'  : '/JetSysCorr3',
+  'JetSysCorr4'  : '/JetSysCorr4',
+  '_50ns'        : '/mc_50ns'
 }
 
 for key in subdirs:
